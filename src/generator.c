@@ -119,8 +119,8 @@ parseInput (int argc, char **argv)
  *
  * @param edgeList
  */
-void
-colorizeVertex (struct GRAPH_EDGE_LIST *edgeList)
+static void
+shuffle (struct GRAPH_EDGE_LIST *edgeList)
 {
   for (int i = 0; i < edgeList->length; i++)
     {
@@ -145,7 +145,7 @@ generateSolution (struct GRAPH_EDGE_LIST edgeList)
 
   int counter = 0;
 
-  colorizeVertex (&edgeList);
+  shuffle (&edgeList);
 
   for (int i = 0; i < edgeList.length; i++)
     {
