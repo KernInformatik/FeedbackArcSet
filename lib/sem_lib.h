@@ -1,10 +1,12 @@
 /**
  * @file semaphore.h
  * @author Kernkraftwerk (kernkraftwerk@hotmail.com)
- * @brief Provides functions to set up and tear down shared memory and semaphores for IPC between a server and client
+ * @brief Provides functions to set up and tear down shared memory and
+semaphores for IPC between a server and client process
+ * @details This module wraps shm_open(3), mmap(2), and sem_open(3) into a
+small
+ *          set of create/connect/destroy/disconnect functions. A server
 process
- * @details This module wraps shm_open(3), mmap(2), and sem_open(3) into a small
- *          set of create/connect/destroy/disconnect functions. A server process
  *          must call the *_create functions before any client calls *_connect,
  *          since the server is responsible for allocating the underlying
  *          resources. There must be exactly one server; there may be many
@@ -29,14 +31,15 @@ process
  * @details Each slot of the circular buffer holds one complete solution
  *          (a set of at most GRAPH_MAX_SOLUTION_EDGES edges). The graph itself
  *          is NOT stored here: every generator keeps its own copy.
- *          alive is set to 1 by the supervisor and to 0 to make all generators terminate.
+ *          alive is set to 1 by the supervisor and to 0 to make all generators
+ * terminate.
  */
-struct shm {
-	struct GRAPH_EDGE_LIST data[MAX_BUFF_SIZE];
-	size_t readhead;
-	size_t writehead;
+struct shm
+{
+  struct GRAPH_EDGE_LIST data[MAX_BUFF_SIZE];
+  size_t readhead;
+  size_t writehead;
 };
-
 /*SHARED MEMORY OPTIONS */
 #define SHM_NAME "/eXXXXXXXX_shm"
 #define SHM_OFLAG_SERVER (O_RDWR | O_CREAT | O_EXCL)
@@ -49,8 +52,9 @@ struct shm {
 
 /*SEMAPHORE OPTIONS */
 /**
- * @brief For the circular buffer use 3 semaphores, sem_t *free, sem_t *used, sem_t *write. Each of these semphores are
-needed for proper IPC communication between processess
+ * @brief For the circular buffer use 3 semaphores, sem_t *free, sem_t *used,
+sem_t *write. Each of these semphores are needed for proper IPC communication
+between processess
  *
  */
 #define FREE_SPACE_SEMAPHORE "/eXXXXXXXX_sem_free"
@@ -69,7 +73,8 @@ needed for proper IPC communication between processess
 
 /*SEMAPHORE ERROR*/
 #define OPENING_SHM_ERROR_SERVER "Creating shared memory failed"
-#define OPENING_SHM_ERROR_CLIENT "Opening shared memory failed. Ensure a supervisor is running"
+#define OPENING_SHM_ERROR_CLIENT                                              \
+  "Opening shared memory failed. Ensure a supervisor is running"
 
 #define TRUNCATING_SHM_ERROR "Initializing shared memory failed"
 #define MAPPING_SHM_ERROR "Mapping shared memory failed"
@@ -94,7 +99,7 @@ needed for proper IPC communication between processess
  *              descriptor. Caller must keep it for cleanSharedMemory_Server.
  * @return struct shm*
  */
-struct shm *sharedMemory_Server(int *shmfd);
+struct shm *sharedMemory_Server (int *shmfd);
 
 /**
  * @brief Opens and maps an existing shared memory segment (client side)
@@ -107,7 +112,7 @@ struct shm *sharedMemory_Server(int *shmfd);
  *              descriptor. Caller must keep it for cleanSharedMemory_Client.
  * @return struct shm*
  */
-struct shm *sharedMemory_Client(int *shmfd);
+struct shm *sharedMemory_Client (int *shmfd);
 
 /**
  * @brief Unmaps, closes, and unlinks the shared memory segment (server side)
@@ -115,10 +120,12 @@ struct shm *sharedMemory_Client(int *shmfd);
  *          After this call, shm points to invalid memory and must not be
  *          dereferenced.
  *
- * @param shm   Pointer to the shared memory, as returned by initializeSharedMemory_Server.
- * @param shmfd The file descriptor returned via initializeSharedMemory_Server's shmfd param.
+ * @param shm   Pointer to the shared memory, as returned by
+ * initializeSharedMemory_Server.
+ * @param shmfd The file descriptor returned via
+ * initializeSharedMemory_Server's shmfd param.
  */
-void cleanSharedMemory_Server(struct shm *shm, int shmfd);
+void cleanSharedMemory_Server (struct shm *shm, int shmfd);
 
 /**
  * @brief Unmaps and closes the shared memory segment (client side)
@@ -127,10 +134,12 @@ void cleanSharedMemory_Server(struct shm *shm, int shmfd);
  *          After this call, shm points to invalid memory and must not be
  *          dereferenced.
  *
- * @param shm   Pointer to the shared memory, as returned by sharedMemory_Client.
- * @param shmfd The file descriptor returned via sharedMemory_Client's shmfd param.
+ * @param shm   Pointer to the shared memory, as returned by
+ * sharedMemory_Client.
+ * @param shmfd The file descriptor returned via sharedMemory_Client's shmfd
+ * param.
  */
-void cleanSharedMemory_Client(struct shm *shm, int shmfd);
+void cleanSharedMemory_Client (struct shm *shm, int shmfd);
 
 /**
  * @brief Creates and initializes a named semaphore (server side)
@@ -143,8 +152,8 @@ void cleanSharedMemory_Client(struct shm *shm, int shmfd);
  * @param init_value The initial value of the semaphore.
  * @return sem_t*
  */
-sem_t *initializeSemaphore_Server(const char *sem_name,
-    unsigned int init_value);
+sem_t *initializeSemaphore_Server (const char *sem_name,
+                                   unsigned int init_value);
 
 /**
  * @brief Opens an existing named semaphore (client side)
@@ -154,16 +163,17 @@ sem_t *initializeSemaphore_Server(const char *sem_name,
  * @param sem_name The semaphore's name, matching one used by the server.
  * @return sem_t*
  */
-sem_t *initializeSemaphore_Client(const char *sem_name);
+sem_t *initializeSemaphore_Client (const char *sem_name);
 
 /**
  * @brief Closes and unlinks a semaphore (server side)
  * @details Calls sem_close(3) and sem_unlink(3), in that order.
  *
- * @param semaphore Pointer to the semaphore, as returned by initializeSemaphore_Server.
+ * @param semaphore Pointer to the semaphore, as returned by
+ * initializeSemaphore_Server.
  * @param sem_name  The semaphore's name (needed for sem_unlink).
  */
-void cleanSemaphore_Server(sem_t *semaphore, const char *sem_name);
+void cleanSemaphore_Server (sem_t *semaphore, const char *sem_name);
 
 /**
  * @brief Closes a semaphore without unlinking it (client side)
@@ -172,8 +182,8 @@ void cleanSemaphore_Server(sem_t *semaphore, const char *sem_name);
  *
  * @param semaphore Pointer to the semaphore, as returned by semaphore_Client.
  */
-void cleanSemaphore_Client(sem_t *semaphore);
+void cleanSemaphore_Client (sem_t *semaphore);
 
-void onSignal(int sig, siginfo_t *si, void *unused);
-void initSignalHandler(void);
+void onSignal (int sig, siginfo_t *si, void *unused);
+void initSignalHandler (void);
 #endif

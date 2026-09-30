@@ -4,7 +4,7 @@ CC       = gcc
 BUILDDIR = build
 BINDIR   = .
 
-LIBNAME  = libsem.a
+LIBNAME  = libsem.so
 LIBSEM   = $(BUILDDIR)/$(LIBNAME)
 
 # sources
@@ -31,7 +31,8 @@ default = -std=c99 -pedantic -g -Wall $(defs)
 verbose = -std=c99 -pedantic -g3 -Wall -Wextra -Wwrite-strings -Wconversion -Wformat=2 -Warray-bounds -Wstack-protector -Wshadow $(defs)
 
 # compile-time hardening
-harden_cc = -fstack-protector-strong -fstack-clash-protection -D_FORTIFY_SOURCE=2 \
+# hopefully -O3 doesnt mess me up like Debian
+harden_cc = -O3 -fstack-protector-strong -fstack-clash-protection -D_FORTIFY_SOURCE=3 \
             -fPIE -Wformat -Wformat-security -Werror=format-security
 
 # link-time hardening
