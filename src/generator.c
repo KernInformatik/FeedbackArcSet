@@ -57,7 +57,7 @@ parseInput (int argc, char **argv)
 
   for (int i = 1; i < argc; i++)
     {
-      if (strchr (argv[i], '-') != strchr (argv[i], '-'))
+      if (strchr (argv[i], '-') != strrchr (argv[i], '-'))
         {
           error_exit ("to many dashes in argument");
         }
@@ -120,14 +120,30 @@ parseInput (int argc, char **argv)
  * @param edgeList
  */
 static void
-shuffle (struct GRAPH_EDGE_LIST *edgeList)
+shuffle (struct GRAPH_VERTEX VertexList[], size_t length)
 {
-  for (int i = 0; i < edgeList->length; i++)
+  if (length > 1)
     {
-      edgeList->edgeList[i].from.order = rand () % 2;
-
-      edgeList->edgeList[i].to.order = rand () % 2;
+      for (size_t i = 0; i < length - 1; i++)
+        {
+          size_t j = i + rand () / (RAND_MAX / (length - i) + 1);
+          struct GRAPH_VERTEX t = VertexList[j];
+          VertexList[j] = VertexList[i];
+          VertexList[i] = t;
+        }
     }
+}
+static size_t
+position (struct GRAPH_VERTEX VertexList[], int value, size_t length)
+{
+  size_t position = 0;
+
+  while (position < length && VertexList[position].name != value)
+    {
+      ++position;
+    }
+
+  return (position == length ? -1 : position);
 }
 
 /**
@@ -143,13 +159,28 @@ generateSolution (struct GRAPH_EDGE_LIST edgeList)
 {
   struct GRAPH_EDGE_LIST solution;
 
-  int counter = 0;
+  struct GRAPH_VERTEX VertexList[edgeList.length * 2];
 
-  shuffle (&edgeList);
+  int counter = 0;
+  int pos = 0;
+  for (int i = 0; i < edgeList.length; i++)
+    {
+      struct GRAPH_VERTEX edge[2]
+          = { edgeList.edgeList[i].from, edgeList.edgeList[i].to };
+      for (int k = 0; k < 2; k++)
+        {
+          VertexList[pos++] = edge[k];
+        }
+    }
+
+  shuffle (VertexList, edgeList.length * 2);
 
   for (int i = 0; i < edgeList.length; i++)
     {
-      if (edgeList.edgeList[i].from.order > edgeList.edgeList[i].to.order)
+      if (position (VertexList, edgeList.edgeList[i].from.name,
+                    edgeList.length * 2)
+          < position (VertexList, edgeList.edgeList[i].to.name,
+                      edgeList.length * 2))
         {
           solution.edgeList[counter++] = edgeList.edgeList[i];
         }
@@ -178,11 +209,14 @@ writeSolution (struct GRAPH_EDGE_LIST edgeList, struct shm *sharedMemory,
   sem_post (used);
   sharedMemory->writehead++;
   sharedMemory->writehead %= MAX_BUFF_SIZE;
+  fprintf (stderr, "generator: wrote %zu edges at slot %zu\n", edgeList.length,
+           sharedMemory->writehead);
 }
 
 int
 main (int argc, char **argv)
 {
+  srand ((unsigned int)time (NULL));
   int shmfd;
   struct shm *possibleSolution = sharedMemory_Client (&shmfd);
   sem_t *free, *used, *write;

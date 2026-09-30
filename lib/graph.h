@@ -13,17 +13,6 @@
 #include "common.h"
 
 /**
- * @brief according to the assignment the vertexes of the graph can onlz be in
- * RGB
- *
- */
-enum GRAPH_VERTEX_ORDER
-{
-  FIRST = 0,
-  SECOND = 1
-};
-
-/**
  * @brief A vertex consists of the name of the vertex, an unsigned integer, and
  * the color of a vertex
  *
@@ -31,7 +20,6 @@ enum GRAPH_VERTEX_ORDER
 struct GRAPH_VERTEX
 {
   uint name;
-  enum GRAPH_VERTEX_ORDER order;
 };
 
 /**
