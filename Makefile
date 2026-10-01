@@ -45,10 +45,6 @@ library = -pthread -lrt
 # pick the base flag set with: make MODE=verbose
 MODE ?= default
 
-# extra flags, set by the asan / harden targets (or on the command line)
-EXTRA_CFLAGS  ?=
-EXTRA_LDFLAGS ?=
-
 CFLAGS  = $($(MODE)) $(INCLUDES) -MMD -MP $(EXTRA_CFLAGS)
 LDFLAGS = $(EXTRA_LDFLAGS)
 
