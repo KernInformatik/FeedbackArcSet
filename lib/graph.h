@@ -17,9 +17,8 @@
  * the color of a vertex
  *
  */
-struct GRAPH_VERTEX
-{
-  uint name;
+struct GRAPH_VERTEX {
+	uint name;
 };
 
 /**
@@ -27,10 +26,9 @@ struct GRAPH_VERTEX
  * with E :={u,v}
  *
  */
-struct GRAPH_EDGE
-{
-  struct GRAPH_VERTEX from;
-  struct GRAPH_VERTEX to;
+struct GRAPH_EDGE {
+	struct GRAPH_VERTEX from;
+	struct GRAPH_VERTEX to;
 };
 
 /**
@@ -38,9 +36,8 @@ struct GRAPH_EDGE
  * which is storing a maximum of 1028 edges, rougly 1KiB in memory
  *
  */
-struct GRAPH_EDGE_LIST
-{
-  struct GRAPH_EDGE edgeList[1028];
-  size_t length;
+struct GRAPH_EDGE_LIST {
+	struct GRAPH_EDGE edgeList[1028];
+	size_t length;
 };
 #endif

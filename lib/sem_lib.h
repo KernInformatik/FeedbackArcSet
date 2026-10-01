@@ -23,7 +23,6 @@ process
 
 #include "common.h"
 #include "graph.h"
-
 #define MAX_BUFF_SIZE 32
 
 /**
@@ -34,11 +33,10 @@ process
  *          alive is set to 1 by the supervisor and to 0 to make all generators
  * terminate.
  */
-struct shm
-{
-  struct GRAPH_EDGE_LIST data[MAX_BUFF_SIZE];
-  size_t readhead;
-  size_t writehead;
+struct shm {
+	struct GRAPH_EDGE_LIST data[MAX_BUFF_SIZE];
+	size_t readhead;
+	size_t writehead;
 };
 /*SHARED MEMORY OPTIONS */
 #define SHM_NAME "/eXXXXXXXX_shm"
@@ -99,7 +97,7 @@ between processess
  *              descriptor. Caller must keep it for cleanSharedMemory_Server.
  * @return struct shm*
  */
-struct shm *sharedMemory_Server (int *shmfd);
+struct shm *sharedMemory_Server(int *shmfd);
 
 /**
  * @brief Opens and maps an existing shared memory segment (client side)
@@ -112,7 +110,7 @@ struct shm *sharedMemory_Server (int *shmfd);
  *              descriptor. Caller must keep it for cleanSharedMemory_Client.
  * @return struct shm*
  */
-struct shm *sharedMemory_Client (int *shmfd);
+struct shm *sharedMemory_Client(int *shmfd);
 
 /**
  * @brief Unmaps, closes, and unlinks the shared memory segment (server side)
@@ -125,7 +123,7 @@ struct shm *sharedMemory_Client (int *shmfd);
  * @param shmfd The file descriptor returned via
  * initializeSharedMemory_Server's shmfd param.
  */
-void cleanSharedMemory_Server (struct shm *shm, int shmfd);
+void cleanSharedMemory_Server(struct shm *shm, int shmfd);
 
 /**
  * @brief Unmaps and closes the shared memory segment (client side)
@@ -139,7 +137,7 @@ void cleanSharedMemory_Server (struct shm *shm, int shmfd);
  * @param shmfd The file descriptor returned via sharedMemory_Client's shmfd
  * param.
  */
-void cleanSharedMemory_Client (struct shm *shm, int shmfd);
+void cleanSharedMemory_Client(struct shm *shm, int shmfd);
 
 /**
  * @brief Creates and initializes a named semaphore (server side)
@@ -152,8 +150,8 @@ void cleanSharedMemory_Client (struct shm *shm, int shmfd);
  * @param init_value The initial value of the semaphore.
  * @return sem_t*
  */
-sem_t *initializeSemaphore_Server (const char *sem_name,
-                                   unsigned int init_value);
+sem_t *initializeSemaphore_Server(const char *sem_name,
+    unsigned int init_value);
 
 /**
  * @brief Opens an existing named semaphore (client side)
@@ -163,7 +161,7 @@ sem_t *initializeSemaphore_Server (const char *sem_name,
  * @param sem_name The semaphore's name, matching one used by the server.
  * @return sem_t*
  */
-sem_t *initializeSemaphore_Client (const char *sem_name);
+sem_t *initializeSemaphore_Client(const char *sem_name);
 
 /**
  * @brief Closes and unlinks a semaphore (server side)
@@ -173,7 +171,7 @@ sem_t *initializeSemaphore_Client (const char *sem_name);
  * initializeSemaphore_Server.
  * @param sem_name  The semaphore's name (needed for sem_unlink).
  */
-void cleanSemaphore_Server (sem_t *semaphore, const char *sem_name);
+void cleanSemaphore_Server(sem_t *semaphore, const char *sem_name);
 
 /**
  * @brief Closes a semaphore without unlinking it (client side)
@@ -182,8 +180,8 @@ void cleanSemaphore_Server (sem_t *semaphore, const char *sem_name);
  *
  * @param semaphore Pointer to the semaphore, as returned by semaphore_Client.
  */
-void cleanSemaphore_Client (sem_t *semaphore);
+void cleanSemaphore_Client(sem_t *semaphore);
 
-void onSignal (int sig, siginfo_t *si, void *unused);
-void initSignalHandler (void);
+void onSignal(int sig, siginfo_t *si, void *unused);
+void initSignalHandler(void);
 #endif

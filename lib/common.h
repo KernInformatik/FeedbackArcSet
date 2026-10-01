@@ -59,16 +59,18 @@
 #endif
 
 /* Error helpers  */
-static inline KK_NORETURN void error_exit(const char *msg)
+static inline KK_NORETURN void
+error_exit(const char *msg)
 {
-    perror(msg);
-    exit(EXIT_FAILURE);
+	perror(msg);
+	exit(EXIT_FAILURE);
 }
 
-static inline void error_exit_failure(int val, const char *msg)
+static inline void
+error_exit_failure(int val, const char *msg)
 {
-    if (val == -1)
-        error_exit(msg);
+	if (val == -1)
+		error_exit(msg);
 }
 
 #endif /* KK_COMMON_H */
