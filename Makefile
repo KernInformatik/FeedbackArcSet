@@ -27,8 +27,8 @@ SUPERVISOR = $(BINDIR)/supervisor
 INCLUDES = -Ilib
 
 defs    = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_SVID_SOURCE -D_POSIX_C_SOURCE=200809L
-default = -std=c99 -pedantic -g -Wall $(defs)
-verbose = -std=c99 -pedantic -g3 -Wall -Wextra -Wwrite-strings -Wconversion -Wformat=2 -Warray-bounds -Wstack-protector -Wshadow $(defs)
+default = -std=c99 -pedantic -g -Wall -Werror $(defs)
+extraverbose = -std=c99 -pedantic -g3 -Wall -Wextra -Wwrite-strings -Wconversion -Wformat=2 -Warray-bounds -Wstack-protector -Wshadow $(defs)
 
 # compile-time hardening
 # hopefully -O3 doesnt mess me up like Debian
@@ -48,11 +48,11 @@ MODE ?= default
 CFLAGS  = $($(MODE)) $(INCLUDES) -MMD -MP $(EXTRA_CFLAGS)
 LDFLAGS = $(EXTRA_LDFLAGS)
 
-.PHONY: all verbose asan harden doc clean
+.PHONY: all extraverbose asan harden doc clean
 
 all: $(GENERATOR) $(SUPERVISOR)
 
-verbose:
+extraverbose:
 	$(MAKE) MODE=verbose all
 
 asan: clean
